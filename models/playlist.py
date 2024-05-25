@@ -27,6 +27,10 @@ class Playlist(BaseModel):
         self.owner = owner
         self.total_tracks = total_tracks
 
+    def __str__(self):
+        """Return a string representation of the Playlist instance."""
+        return f"[Playlist] (ID: {self.id}, Name: {self.name})"
+
     def to_dict(self):
         """Return a dictionary representation of Playlist."""
         playlist_dict = super().to_dict()
