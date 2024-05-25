@@ -3,7 +3,7 @@
 import json
 from models.base_model import BaseModel
 from models.user import User
-
+from models.playlist import Playlist
 
 class FileStorage:
     """Represent an abstracted storage engine.
