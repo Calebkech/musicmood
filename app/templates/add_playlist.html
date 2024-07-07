@@ -1,0 +1,28 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="container">
+    <form class="row g-3 needs-validation" method="post" enctype="multipart/form-data" novalidate>
+        {{ form.hidden_tag() }}
+
+        <div class="col-md-6 position-relative">
+            {{ form.name.label(class="form-label") }}
+            {{ form.name(class="form-control") }}
+        </div>
+
+        <div class="col-md-6 position-relative">
+            {{ form.description.label(class="form-label") }}
+            {{ form.description(class="form-control") }}
+        </div>
+
+        <div class="col-md-6 position-relative">
+            {{ form.playlist_profile.label(class="form-label") }}
+            {{ form.playlist_profile(class="form-control") }}
+        </div>
+
+        <div class="col-12">
+            {{ form.submit(class="btn btn-secondary") }}
+        </div>
+    </form>
+</div>
+{% endblock %}
