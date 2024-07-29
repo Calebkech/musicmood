@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Music Player</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/styles.css') }}">
+</head>
+<body>
+    <div class="player">
+        <div class="track-info">
+            <span id="track-title">Track Title</span>
+            <span id="track-artist">Artist Name</span>
+            <span id="track-album">Album Name</span>
+        </div>
+        <div class="controls">
+            <button id="prev">Prev</button>
+            <button id="play">Play</button>
+            <button id="pause">Pause</button>
+            <button id="stop">Stop</button>
+            <button id="next">Next</button>
+            <input type="range" id="volume" min="0" max="1" step="0.1">
+        </div>
+        <ul id="playlist">
+            <!-- Playlist items will be dynamically added here -->
+        </ul>
+    </div>
+    <script src="{{ url_for('static', filename='js/scripts.js') }}"></script>
+</body>
+</html>

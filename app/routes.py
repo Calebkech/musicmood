@@ -13,8 +13,6 @@ from flask_login import login_required
 
 main = Blueprint('main', __name__)
 
-
-
 @main.route('/')
 @login_required
 def index():
@@ -281,8 +279,3 @@ def delete_user(user_id):
     
     #redirect back to song list
     return redirect(url_for('main.users'))
-
-
-@main.route('/admin')
-def admin_page():
-    return render_template('admin.html')

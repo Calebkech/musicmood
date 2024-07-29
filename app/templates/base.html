@@ -1,78 +1,140 @@
-<!doctype html>
+<!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="utf-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>MusicMood</title>
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-QWTKZyjpPEjISv5WaRU9OFeRpok6YctnYmDr5pNlyT2bRjXh0JMhjY6hW+ALEwIH" crossorigin="anonymous">
+    <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/styles.css') }}">
 </head>
-<body>
-<div class="container">
-    <nav class="navbar navbar-expand-lg navbar-light bg-light">
-        <div class="container-fluid">
-            <a class="navbar-brand" href="/">MusicMood</a>
-            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav"
-                    aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
-                <span class="navbar-toggler-icon"></span>
-            </button>
-            <div class="collapse navbar-collapse" id="navbarNav">
-                <ul class="navbar-nav">
-                    <li class="nav-item">
-                        <a class="nav-link" href="{{ url_for('main.songs' )}}">Songs</a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link" href="{{ url_for('main.playlist' )}}">Playlists</a>
-                    </li>
-                    {% if current_user.is_authenticated %}
-                        <li class="nav-item">
-                            <a class="nav-link" href="{{ url_for('auth.logout' )}}">logout</a>
-                        </li>
-                    {% else %}
-                        <li class="nav-item">
-                            <a class="nav-link" href="{{ url_for('auth.login' )}}">Login</a>
-                        </li>
-                    {% endif %}
-
-                </ul>
-            </div>
-
-            <div>
-                <span class="navbar"
-                    {{current_user.name}}
-                ></span>
-            </div>
-
+<body class="bg-gray-900 text-white flex flex-col min-h-screen">
+    <header class="flex justify-between items-center p-4 bg-black">
+        <div class="logo">
+            <a href="{{ url_for('main.index')}}"><img src="{{ url_for('static', filename='img/logo.png') }}" alt="Audiomack Logo" class="h-10"></a>
         </div>
-    </nav>
-    <div class="">
-        <nav style="--bs-breadcrumb-divider: '>';" aria-label="breadcrumb">
-            <ol class="breadcrumb">
-              <li class="breadcrumb-item"><a href="/">Home</a></li>
-              <li class="breadcrumb-item" aria-current="page">Dashboard</li>
-            </ol>
+        <div class="search-bar">
+            <input type="text" placeholder="Search for artists, songs, moods" class="p-2 rounded bg-gray-800 text-white">
+        </div>
+        <nav class="flex space-x-4">
+            <a href="{{ url_for('main.playlist')}}" class="text-white">Discover</a>
+            <a href="{{ url_for('main.songs')}}" class="text-white">Tracks</a>
+            {% if current_user.is_authenticated %}
+                <a href="{{ url_for('auth.profile')}}" class="text-white">@{{ current_user.username }}</a>
+            {% endif %}
         </nav>
-        {% for message in get_flashed_messages() %}
-        <div class="alert alert-warning alert-dismissible fade show" role="alert">
-            {{ message }}
-            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
-        </div>
-        {% endfor %}
-    
-      {% block content %}
+    </header>
 
-
-
-      {% endblock %}
+    <!-- Flash Messages -->
+    <div class="fixed top-0 right-0 m-4 w-full max-w-sm z-50">
+        {% with messages = get_flashed_messages(with_categories=true) %}
+            {% if messages %}
+                {% for category, message in messages %}
+                    <div class="bg-{{ 'green-500' if category == 'success' else 'red-500' if category == 'danger' else 'yellow-500' if category == 'warning' else 'blue-500' }} text-white px-4 py-3 rounded relative mb-4" role="alert">
+                        <span class="block sm:inline">{{ message }}</span>
+                        <span class="absolute top-0 bottom-0 right-0 px-4 py-3">
+                            <svg class="fill-current h-6 w-6 text-white" role="button" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" onclick="this.parentElement.parentElement.style.display='none';">
+                                <title>Close</title>
+                                <path d="M14.348 5.652a1 1 0 00-1.414 0L10 8.586 7.066 5.652a1 1 0 10-1.414 1.414L8.586 10l-2.934 2.934a1 1 0 101.414 1.414L10 11.414l2.934 2.934a1 1 0 101.414-1.414L11.414 10l2.934-2.934a1 1 0 000-1.414z"/>
+                            </svg>
+                        </span>
+                    </div>
+                {% endfor %}
+            {% endif %}
+        {% endwith %}
     </div>
 
-  <footer class="footer mt-auto py-3 bg-light fixed-bottom">
-      <div class="container text-center">
-          <span class="text-muted">© 2024 MusicMood</span>
-      </div>
-  </footer>
-</div>
+    <!-- Placeholder for dynamic content -->
+    <div id="content" class="flex-grow">
+        {% block content %}
+        {% endblock %}
+    </div>
 
-<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"
-        integrity="sha384-YvpcrYf0tY3lHB60NNkmXc5s9fDVZLESaAA55NDzOxhy9GkcIdslK1eN7N6jIeHz" crossorigin="anonymous"></script>
+    <!-- Music Player Footer -->
+    <footer class="fixed bottom-0 left-0 w-full bg-gray-800 p-2 flex items-center justify-between z-50">
+        <div id="jquery_jplayer" class="jp-jplayer"></div>
+        <div id="jp_container" class="jp-audio flex items-center w-full" role="application" aria-label="media player">
+            <div class="flex items-center space-x-4">
+                <div class="flex items-center space-x-4">
+                    <img id="jp_cover" src="" alt="Cover Image" class="h-10 w-10 rounded">
+                    <div class="jp-title flex-grow text-white" aria-label="title">No Track Playing</div>
+                </div>
+                <div class="jp-controls flex items-center space-x-2 mx-auto">
+                    <button class="jp-previous text-white focus:outline-none" role="button" tabindex="0" aria-label="Previous">
+                        <svg width="24" height="24" fill="none">
+                            <path d="M10 12l8-6v12l-8-6Z" fill="currentColor" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" />
+                            <path d="M6 6v12" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" />
+                        </svg>
+                    </button>
+                    <button class="jp-play text-white focus:outline-none" role="button" tabindex="0" aria-label="Play">
+                        <svg width="24" height="24" fill="none">
+                            <path d="M8 5v14l11-7L8 5z" fill="currentColor" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" />
+                        </svg>
+                    </button>
+                    <button class="jp-pause text-white focus:outline-none hidden" role="button" tabindex="0" aria-label="Pause">
+                        <svg width="24" height="24" fill="none">
+                            <rect x="6" y="4" width="4" height="16" rx="2" fill="currentColor" />
+                            <rect x="14" y="4" width="4" height="16" rx="2" fill="currentColor" />
+                        </svg>
+                    </button>
+                    <button class="jp-next text-white focus:outline-none" role="button" tabindex="0" aria-label="Next">
+                        <svg width="24" height="24" fill="none">
+                            <path d="M14 12L6 6v12l8-6Z" fill="currentColor" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" />
+                            <path d="M18 6v12" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" />
+                        </svg>
+                    </button>
+                    <button class="jp-stop text-white focus:outline-none" role="button" tabindex="0" aria-label="Stop">
+                        <svg width="24" height="24" fill="none">
+                            <rect x="5" y="5" width="14" height="14" fill="currentColor" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" />
+                        </svg>
+                    </button>
+                </div>
+                <div class="jp-progress flex-grow">
+                    <div class="jp-seek-bar bg-gray-600 rounded h-2 cursor-pointer">
+                        <div class="jp-play-bar bg-white h-2 rounded"></div>
+                    </div>
+                </div>
+                <div class="jp-time-holder flex items-center space-x-2 text-gray-400">
+                    <div class="jp-current-time" role="timer" aria-label="time">0:00</div>
+                    <div class="jp-duration" role="timer" aria-label="duration">0:00</div>
+                </div>
+                <div class="jp-volume-controls flex items-center space-x-2">
+                    <button class="jp-mute text-white focus:outline-none" role="button" tabindex="0" aria-label="Mute">
+                        <svg width="24" height="24" fill="none">
+                            <path d="M9 9v6h4l5 5V4l-5 5H9z" fill="currentColor" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" />
+                        </svg>
+                    </button>
+                    <button class="jp-volume-max text-white focus:outline-none" role="button" tabindex="0" aria-label="Max Volume">
+                        <svg width="24" height="24" fill="none">
+                            <path d="M11 5v14l7-7-7-7z" fill="currentColor" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" />
+                        </svg>
+                    </button>
+                    <div class="jp-volume-bar bg-gray-600 rounded h-2 cursor-pointer w-24">
+                        <div class="jp-volume-bar-value bg-white h-2 rounded"></div>
+                    </div>
+                </div>
+                <div class="jp-toggles flex items-center space-x-2">
+                    <button class="jp-repeat text-white focus:outline-none" role="button" tabindex="0" aria-label="Repeat">
+                        <svg width="24" height="24" fill="none">
+                            <path d="M4 4h14a4 4 0 014 4v8a4 4 0 01-4 4H6a4 4 0 01-4-4" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" />
+                            <path d="M10 10l4-4-4-4" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" />
+                            <path d="M14 14l4 4-4 4" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" />
+                        </svg>
+                    </button>
+                    <button class="jp-repeat-off text-white focus:outline-none hidden" role="button" tabindex="0" aria-label="Repeat Off">
+                        <svg width="24" height="24" fill="none">
+                            <path d="M4 4h14a4 4 0 014 4v8a4 4 0 01-4 4H6a4 4 0 01-4-4" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" />
+                            <path d="M10 10l4-4-4-4" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" />
+                            <path d="M14 14l4 4-4 4" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" />
+                            <path d="M1 1l22 22" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" />
+                        </svg>
+                    </button>
+                </div>
+            </div>
+        </div>
+    </footer>
+
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jplayer/2.9.2/jplayer/jquery.jplayer.min.js"></script>
+    <script src="{{ url_for('static', filename='js/scripts.js') }}"></script>
 </body>
 </html>

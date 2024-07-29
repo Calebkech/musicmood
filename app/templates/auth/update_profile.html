@@ -1,0 +1,41 @@
+{% extends "base.html" %}
+{% block title %}Update Profile{% endblock %}
+{% block content %}
+<div class="mx-auto right-0 mt-2 w-full max-w-md pb-24"> <!-- Added padding bottom -->
+    <div class="bg-white rounded overflow-hidden shadow-lg">
+        <div class="text-center p-6 bg-gray-800 border-b">
+            <img class="h-24 w-24 text-white rounded-full mx-auto" src="{{ url_for('static', filename='profile_pics/' ~ (current_user.profile_pic if current_user.profile_pic else 'default.png')) }}" alt="Profile Picture">
+            <p class="pt-2 text-lg font-semibold text-gray-50">{{ current_user.name }}</p>
+            <p class="text-sm text-gray-100">{{ current_user.email }}</p>
+        </div>
+        <div class="p-6 bg-gray-200">
+            <form method="POST" enctype="multipart/form-data" class="space-y-6">
+                {{ form.hidden_tag() }}
+                <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                    <div class="space-y-2">
+                        {{ form.name(class="w-full bg-transparent text-gray-600 dark:text-white dark:border-gray-700 rounded-md border border-gray-300 px-3 py-2 text-sm placeholder-gray-600 invalid:border-red-500 dark:placeholder-gray-300", placeholder="Your Name") }}
+                        {{ form.username(class="w-full bg-transparent text-gray-600 dark:text-white dark:border-gray-700 rounded-md border border-gray-300 px-3 py-2 text-sm placeholder-gray-600 invalid:border-red-500 dark:placeholder-gray-300", placeholder="Your Username") }}
+                    </div>
+                    <div class="space-y-2">
+                        {{ form.email(class="w-full bg-transparent text-gray-600 dark:text-white dark:border-gray-700 rounded-md border border-gray-300 px-3 py-2 text-sm placeholder-gray-600 invalid:border-red-500 dark:placeholder-gray-300", placeholder="Your Email") }}
+                        {{ form.favorite_color(class="w-full bg-transparent text-gray-600 dark:text-white dark:border-gray-700 rounded-md border border-gray-300 px-3 py-2 text-sm placeholder-gray-600 invalid:border-red-500 dark:placeholder-gray-300", placeholder="Your Favorite Color") }}
+                    </div>
+                    <div class="space-y-2 col-span-1 sm:col-span-2">
+                        {{ form.password(class="w-full bg-transparent text-gray-600 dark:text-white dark:border-gray-700 rounded-md border border-gray-300 px-3 py-2 text-sm placeholder-gray-600 invalid:border-red-500 dark:placeholder-gray-300", placeholder="New Password") }}
+                        {{ form.confirm_password(class="w-full bg-transparent text-gray-600 dark:text-white dark:border-gray-700 rounded-md border border-gray-300 px-3 py-2 text-sm placeholder-gray-600 invalid:border-red-500 dark:placeholder-gray-300", placeholder="Confirm New Password") }}
+                    </div>
+                    <div class="col-span-1 sm:col-span-2">
+                        <label for="profile_pic" class="block text-gray-700 dark:text-gray-300 mb-2">Profile Picture</label>
+                        {{ form.profile_pic(class="w-full bg-transparent text-gray-600 dark:text-white dark:border-gray-700 rounded-md border border-gray-300 px-3 py-2 text-sm placeholder-gray-600 invalid:border-red-500 dark:placeholder-gray-300") }}
+                    </div>
+                </div>
+                <div class="mt-6">
+                    <button class="w-full h-10 bg-blue-600 hover:bg-blue-700 active:bg-blue-800 focus:bg-blue-700 transition duration-500 rounded-md text-white">
+                        Update Profile
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+{% endblock %}

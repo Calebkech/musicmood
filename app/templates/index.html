@@ -1,20 +1,47 @@
-{% extends "base.html" %}
+{% extends 'base.html' %}
 
 {% block content %}
-<div class="container overflow-auto" style="max-height: calc(100vh - 150px);"> <!-- Adjust max-height according to your needs -->
-    <div class="row row-cols-1 row-cols-md-3 g-4">
-        {% for playlist in playlists %}
-        <div class="col">
-            <div class="card border-success mb-3" style="max-width: 18rem;">
-                <div class="card-header bg-transparent border-success">{{ playlist.name }}</div>
-                <div class="card-body text-success">
-                    <h5 class="card-title">{{ playlist.name }}</h5>
-                    <p class="card-text">{{ playlist.description }}</p>
+    <!-- Content specific to this page -->
+    <div class="main-container flex">
+        <main class="w-3/4 p-4">
+            <div class="verified-series">
+                <h2 class="inline-block">Verified Series</h2>
+                <a href="#" class="float-right text-yellow-500">Submit a Playlist</a>
+                <div class="series-cards flex justify-between mt-4">
+                    <div class="card bg-gray-700 rounded-lg overflow-hidden w-1/4 relative group">
+                        <img src="{{ url_for('static', filename='img/default.png') }}" alt="Hip-Hop" class="w-full">
+                        <div class="card-info p-2">
+                            <h3 class="text-lg">Verified: Hip-Hop</h3>
+                            <p class="text-sm">Press play on the biggest & best in hip-hop right now 🔥</p>
+                        </div>
+                        <button class="play-button hidden group-hover:flex absolute bottom-4 right-4 bg-yellow-500 text-black w-12 h-12 rounded-full items-center justify-center transition duration-300 ease-in-out">▶</button>
+                    </div>
+                    <div class="card bg-gray-700 rounded-lg overflow-hidden w-1/4 relative group">
+                        <img src="{{ url_for('static', filename='img/blog/blog-1.jpg') }}" alt="Afrosounds" class="w-full">
+                        <div class="card-info p-2">
+                            <h3 class="text-lg">Verified: Afrosounds</h3>
+                            <p class="text-sm">Press play on the best & biggest sounds out of Africa 🌍</p>
+                        </div>
+                        <button class="play-button hidden group-hover:flex absolute bottom-4 right-4 bg-yellow-500 text-black w-12 h-12 rounded-full items-center justify-center transition duration-300 ease-in-out">▶</button>
+                    </div>
+                    <div class="card bg-gray-700 rounded-lg overflow-hidden w-1/4 relative group">
+                        <img src="{{ url_for('static', filename='img/blog/blog-1.jpg') }}" alt="R&B" class="w-full">
+                        <div class="card-info p-2">
+                            <h3 class="text-lg">Verified: R&B</h3>
+                            <p class="text-sm">The biggest and best in R&B right now</p>
+                        </div>
+                        <button class="play-button hidden group-hover:flex absolute bottom-4 right-4 bg-yellow-500 text-black w-12 h-12 rounded-full items-center justify-center transition duration-300 ease-in-out">▶</button>
+                    </div>
+                    <div class="card bg-gray-700 rounded-lg overflow-hidden w-1/4 relative group">
+                        <img src="{{ url_for('static', filename='img/blog/blog-1.jpg') }}" alt="Pop" class="w-full">
+                        <div class="card-info p-2">
+                            <h3 class="text-lg">Verified: Pop</h3>
+                            <p class="text-sm">Hot pop. Right now.</p>
+                        </div>
+                        <button class="play-button hidden group-hover:flex absolute bottom-4 right-4 bg-yellow-500 text-black w-12 h-12 rounded-full items-center justify-center transition duration-300 ease-in-out">▶</button>
+                    </div>
                 </div>
-                <div class="card-footer bg-transparent border-success">Total Songs: {{ playlist.song_count }}</div>
             </div>
-        </div>
-        {% endfor %}
+        </main>
     </div>
-</div>
 {% endblock %}

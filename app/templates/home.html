@@ -1,0 +1,80 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<div class="flex h-screen">
+    <!-- Sidebar -->
+    <div class="w-1/5 bg-gray-800 p-4">
+        <h2 class="text-orange-500 text-xl mb-6">BROWSE</h2>
+        <ul>
+            <li class="mb-4"><a href="#" class="flex items-center p-2 rounded-md bg-gray-700 hover:bg-gray-600"><span class="ml-2">Home</span></a></li>
+            <li class="mb-4"><a href="#" class="flex items-center p-2 rounded-md hover:bg-gray-600"><span class="ml-2">Trending Songs</span></a></li>
+            <li class="mb-4"><a href="#" class="flex items-center p-2 rounded-md hover:bg-gray-600"><span class="ml-2">Trending Albums</span></a></li>
+            <li class="mb-4"><a href="#" class="flex items-center p-2 rounded-md hover:bg-gray-600"><span class="ml-2">Recently Supported</span></a></li>
+            <li class="mb-4"><a href="#" class="flex items-center p-2 rounded-md hover:bg-gray-600"><span class="ml-2">Recently Added</span></a></li>
+            <li class="mb-4"><a href="#" class="flex items-center p-2 rounded-md hover:bg-gray-600"><span class="ml-2">Accounts for You</span></a></li>
+        </ul>
+    </div>
+
+    <!-- Main Content -->
+    <div class="flex-1 p-6">
+        <!-- Trending Playlists -->
+        <div class="mb-6">
+            <div class="flex justify-between items-center mb-6">
+                <h2 class="text-2xl">TRENDING PLAYLISTS</h2>
+                <a href="#" class="text-orange-500">VIEW ALL</a>
+            </div>
+            <div class="grid grid-cols-4 gap-6">
+                {% for playlist in playlists %}
+                <div class="bg-gray-700 p-4 rounded-md">
+                    <img src="{{ url_for('static', filename=playlist.image) }}" alt="Playlist Image" class="rounded-md mb-4">
+                    <h3 class="text-xl">{{ playlist.name }}</h3>
+                    <p class="text-gray-400">{{ playlist.description }}</p>
+                </div>
+                {% endfor %}
+            </div>
+        </div>
+
+        <!-- Latest Tracks -->
+        <div>
+            <div class="flex justify-between items-center mb-6">
+                <h2 class="text-2xl">LATEST TRACKS</h2>
+                <a href="#" class="text-orange-500">VIEW ALL</a>
+            </div>
+            <div class="grid grid-cols-2 gap-6">
+                {% for track in tracks %}
+                <div class="bg-gray-700 p-4 rounded-md card">
+                    <h4>{{ track.artist }}</h4>
+                    <p>{{ track.title }}</p>
+                    <audio controls class="w-full mt-2">
+                        <source src="{{ url_for('static', filename=track.file) }}" type="audio/mp3">
+                        Your browser does not support the audio element.
+                    </audio>
+                </div>
+                {% endfor %}
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Music Player -->
+<div class="fixed bottom-0 left-0 w-full bg-gray-800 p-4 flex items-center justify-between">
+    <div class="flex items-center">
+        <img src="https://via.placeholder.com/50" alt="Song Image" class="rounded-md mr-4">
+        <div>
+            <h4 id="current-artist" class="text-lg">Big Sean</h4>
+            <p id="current-title" class="text-gray-400">Yes</p>
+        </div>
+    </div>
+    <div class="flex items-center">
+        <button id="prev" class="text-white"><svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" viewBox="0 0 24 24" fill="currentColor"><path d="M10 9.5a.5.5 0 01.707 0l4.647 4.647a.5.5 0 010 .707l-4.647 4.647a.5.5 0 11-.707-.707L14.293 15H4.5a.5.5 0 110-1h9.793l-3.793-3.793a.5.5 0 010-.707z"/></svg></button>
+        <button id="play" class="mx-4 text-white"><svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" viewBox="0 0 24 24" fill="currentColor"><path d="M4 4v16l14-8L4 4z"/></svg></button>
+        <button id="pause" class="mx-4 text-white hidden"><svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" viewBox="0 0 24 24" fill="currentColor"><path d="M6 19h4V5H6v14zm8-14v14h4V5h-4z"/></svg></button>
+        <button id="next" class="text-white"><svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" viewBox="0 0 24 24" fill="currentColor"><path d="M10 14.5a.5.5 0 01-.707 0L4.646 9.853a.5.5 0 010-.707l4.647-4.647a.5.5 0 11.707.707L5.707 9H15.5a.5.5 0 110 1H5.707l3.793 3.793a.5.5 0 010 .707z"/></svg></button>
+    </div>
+    <div>
+        <span id="current-time" class="text-gray-400">0:00</span>
+        <input id="progress" type="range" class="mx-2 w-32 h-1 bg-gray-600 rounded-lg overflow-hidden appearance-none" min="0" max="100" value="0">
+        <span id="total-time" class="text-gray-400">0:00</span>
+    </div>
+</div>
+{% endblock %}
