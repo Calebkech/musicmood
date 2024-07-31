@@ -1,9 +1,10 @@
-from flask import Blueprint, render_template, redirect, url_for, flash, request
+from flask import Blueprint, render_template, redirect, url_for, flash, request, current_app
 from flask_login import login_user, login_required, logout_user, current_user
 from werkzeug.security import generate_password_hash, check_password_hash
 from werkzeug.utils import secure_filename
 from .models import Users, db
 from .forms import LoginForm, SignupForm, UpdateProfileForm
+from .signals import is_image_file, compress_image
 import os
 
 auth = Blueprint('auth', __name__)
@@ -15,9 +16,12 @@ def signup():
         try:
             hashed_password = generate_password_hash(form.password.data, method='pbkdf2:sha256')
             profile_pic = form.profile_pic.data
-            if profile_pic:
+            if profile_pic and is_image_file(profile_pic):
                 pic_filename = secure_filename(profile_pic.filename)
-                profile_pic.save(os.path.join('app/static/profile_pics', pic_filename))
+                compressed_image = compress_image(profile_pic)
+                file_path = os.path.join(current_app.root_path, 'static/profile_pics', pic_filename)
+                with open(file_path, 'wb') as f:
+                    f.write(compressed_image.getvalue())
             else:
                 pic_filename = 'default.png'
 
@@ -91,9 +95,16 @@ def update_profile():
             if form.favorite_color.data:
                 current_user.favorite_color = form.favorite_color.data
             if form.profile_pic.data and hasattr(form.profile_pic.data, 'filename'):
-                pic_filename = secure_filename(form.profile_pic.data.filename)
-                form.profile_pic.data.save(os.path.join('app/static/profile_pics', pic_filename))
-                current_user.profile_pic = pic_filename
+                if is_image_file(form.profile_pic.data):
+                    pic_filename = secure_filename(form.profile_pic.data.filename)
+                    compressed_image = compress_image(form.profile_pic.data)
+                    file_path = os.path.join(current_app.root_path, 'static/profile_pics', pic_filename)
+                    with open(file_path, 'wb') as f:
+                        f.write(compressed_image.getvalue())
+                    current_user.profile_pic = pic_filename
+                else:
+                    flash('Invalid file type. Please upload an image file.', 'danger')
+                    return render_template('auth/update_profile.html', form=form)
 
             db.session.commit()
             flash('Your profile has been updated!', 'success')

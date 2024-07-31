@@ -9,6 +9,7 @@ from .forms import UserForm, SongForm, LoginForm, PlaylistForm
 from werkzeug.security import generate_password_hash, check_password_hash
 from sqlalchemy.exc import IntegrityError
 from flask_login import login_required
+from .signals import is_audio_file, is_image_file
 
 
 main = Blueprint('main', __name__)
@@ -49,19 +50,32 @@ def add_songs():
             song_file_path = None
             profile_file_path = None
 
-            if song_file:
+            if song_file and is_audio_file(song_file):
                 song_filename = secure_filename(song_file.filename)
                 song_file_path = os.path.join('music', song_filename)  # Save relative path
                 song_full_path = os.path.join(current_app.root_path, 'static', song_file_path)
                 song_file.save(song_full_path)
                 print(f"Song file saved to: {song_full_path}")
+            else:
+                flash("Invalid file type for the song. Please upload an audio file.", "danger")
+                return render_template('add_songs.html', form=form)
 
-            if song_profile:
+            if song_profile and is_image_file(song_profile):
                 profile_filename = secure_filename(song_profile.filename)
                 profile_file_path = os.path.join('song_image', profile_filename)  # Relative path, no 'static/'
                 image_full_path = os.path.join(current_app.root_path, 'static', profile_file_path)
                 song_profile.save(image_full_path)
-                print(f"Profile image saved to: {image_full_path}")
+                try:
+                    compressed_path = os.path.join(current_app.root_path, 'static', 'song_image', f'compressed_{profile_filename}')
+                    compress_image(image_full_path, compressed_path)
+                    profile_file_path = f'song_image/compressed_{profile_filename}'  # Save relative path in DB
+                    print(f"Profile image saved and compressed to: {compressed_path}")
+                except Exception as e:
+                    flash(f"An error occurred while compressing the image: {e}", "danger")
+                    return render_template('add_songs.html', form=form)
+            elif song_profile and not is_image_file(song_profile):
+                flash("Invalid file type for the profile image. Please upload an image file.", "danger")
+                return render_template('add_songs.html', form=form)
             else:
                 profile_file_path = 'song_image/default_song_image.png'
                 print("Using default profile image")
@@ -80,11 +94,11 @@ def add_songs():
             # Add the new song to the database
             db.session.add(new_song)
             db.session.commit()
-            flash('Song added successfully!')
+            flash('Song added successfully!', 'success')
             return redirect(url_for('main.songs'))
         except Exception as e:
             db.session.rollback()
-            flash(f'An error occurred while adding the song: {str(e)}')
+            flash(f'An error occurred while adding the song: {str(e)}', 'danger')
 
     return render_template('add_songs.html', form=form)
 
