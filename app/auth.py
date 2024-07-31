@@ -47,7 +47,7 @@ def login():
             if user and check_password_hash(user.password_hash, form.password.data):
                 login_user(user)
                 flash("Login Successful", "success")
-                return redirect(url_for('main.index'))
+                return redirect(url_for('main.songs'))
             else:
                 flash("Wrong Username or Password", "danger")
         except Exception as e:
@@ -97,7 +97,7 @@ def update_profile():
 
             db.session.commit()
             flash('Your profile has been updated!', 'success')
-            return redirect(url_for('main.index'))
+            return redirect(url_for('main.songs'))
         except Exception as e:
             db.session.rollback()
             flash(f"An error occurred while updating your profile: {e}", 'danger')
