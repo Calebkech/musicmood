@@ -17,12 +17,7 @@ main = Blueprint('main', __name__)
 @main.route('/')
 @login_required
 def index():
-    sample_playlists = [
-        {'name': 'Chill Hits', 'description': 'Relax and unwind with these chill hits.', 'song_count': 20},
-        {'name': 'Workout Mix', 'description': 'Get pumped with this energetic workout playlist.', 'song_count': 30},
-        {'name': 'Top 50', 'description': 'The top 50 songs right now.', 'song_count': 50},
-    ]
-    return render_template('index.html', playlists=sample_playlists)
+    return redirect(url_for('main.songs'))
 
 
 @main.route('/song/song_list')
