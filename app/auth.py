@@ -14,17 +14,20 @@ def signup():
     form = SignupForm()
     if form.validate_on_submit():
         try:
+            # Hash the password
             hashed_password = generate_password_hash(form.password.data, method='pbkdf2:sha256')
+
+            # Handle profile picture upload
             profile_pic = form.profile_pic.data
             if profile_pic and is_image_file(profile_pic):
                 pic_filename = secure_filename(profile_pic.filename)
-                compressed_image = compress_image(profile_pic)
                 file_path = os.path.join(current_app.root_path, 'static/profile_pics', pic_filename)
-                with open(file_path, 'wb') as f:
-                    f.write(compressed_image.getvalue())
+                profile_pic.save(file_path)
+                compress_image(file_path, file_path)
             else:
                 pic_filename = 'default.png'
 
+            # Create a new user
             new_user = Users(
                 username=form.username.data,
                 password_hash=hashed_password,
@@ -79,13 +82,16 @@ def update_profile():
     form = UpdateProfileForm(obj=current_user)
     if form.validate_on_submit():
         try:
+            # Check if passwords match
             if form.password.data and form.password.data != form.confirm_password.data:
                 flash('Passwords do not match. Please try again.', 'danger')
                 return render_template('auth/update_profile.html', form=form)
 
+            # Update password if provided
             if form.password.data:
                 current_user.password_hash = generate_password_hash(form.password.data, method='pbkdf2:sha256')
 
+            # Update other fields
             if form.name.data:
                 current_user.name = form.name.data
             if form.username.data:
@@ -94,14 +100,15 @@ def update_profile():
                 current_user.email = form.email.data
             if form.favorite_color.data:
                 current_user.favorite_color = form.favorite_color.data
+
+            # Handle profile picture update
             if form.profile_pic.data and hasattr(form.profile_pic.data, 'filename'):
                 if is_image_file(form.profile_pic.data):
                     pic_filename = secure_filename(form.profile_pic.data.filename)
-                    compressed_image = compress_image(form.profile_pic.data)
                     file_path = os.path.join(current_app.root_path, 'static/profile_pics', pic_filename)
-                    with open(file_path, 'wb') as f:
-                        f.write(compressed_image.getvalue())
-                    current_user.profile_pic = pic_filename
+                    form.profile_pic.data.save(file_path)
+                    compress_image(file_path, file_path)
+                    current_user.profile_pic = pic_filename  # Save only the filename
                 else:
                     flash('Invalid file type. Please upload an image file.', 'danger')
                     return render_template('auth/update_profile.html', form=form)
