@@ -9,7 +9,7 @@ from .forms import UserForm, SongForm, LoginForm, PlaylistForm
 from werkzeug.security import generate_password_hash, check_password_hash
 from sqlalchemy.exc import IntegrityError
 from flask_login import login_required
-from .signals import is_audio_file, is_image_file
+from .signals import is_audio_file, is_image_file, compress_image
 
 
 main = Blueprint('main', __name__)
