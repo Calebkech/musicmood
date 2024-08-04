@@ -107,10 +107,12 @@ def update_profile():
             if form.profile_pic.data and hasattr(form.profile_pic.data, 'filename'):
                 if is_image_file(form.profile_pic.data):
                     pic_filename = secure_filename(form.profile_pic.data.filename)
-                    file_path = os.path.join(current_app.root_path, 'static/profile_pics', pic_filename)
-                    form.profile_pic.data.save(file_path)
-                    compress_image(file_path, file_path)
-                    current_user.profile_pic = f'profile_pics/{pic_filename}'
+                    # Define the file path correctly
+                    file_path = os.path.join('static/profile_pics', pic_filename)
+                    full_file_path = os.path.join(current_app.root_path, file_path)
+                    form.profile_pic.data.save(full_file_path)
+                    compress_image(full_file_path, full_file_path)
+                    current_user.profile_pic = pic_filename
                 else:
                     flash('Invalid file type. Please upload an image file.', 'danger')
                     return render_template('auth/update_profile.html', form=form)
