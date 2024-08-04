@@ -100,6 +100,8 @@ def update_profile():
                 current_user.email = form.email.data
             if form.favorite_color.data:
                 current_user.favorite_color = form.favorite_color.data
+            if form.is_admin.data is not None:
+                current_user.is_admin = form.is_admin.data
 
             # Handle profile picture update
             if form.profile_pic.data and hasattr(form.profile_pic.data, 'filename'):
@@ -108,7 +110,7 @@ def update_profile():
                     file_path = os.path.join(current_app.root_path, 'static/profile_pics', pic_filename)
                     form.profile_pic.data.save(file_path)
                     compress_image(file_path, file_path)
-                    current_user.profile_pic = pic_filename  # Save only the filename
+                    current_user.profile_pic = f'profile_pics/{pic_filename}'
                 else:
                     flash('Invalid file type. Please upload an image file.', 'danger')
                     return render_template('auth/update_profile.html', form=form)

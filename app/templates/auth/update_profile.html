@@ -13,21 +13,27 @@
                 {{ form.hidden_tag() }}
                 <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
                     <div class="space-y-2">
-                        {{ form.name(class="w-full bg-transparent text-gray-600 dark:text-white dark:border-gray-700 rounded-md border border-gray-300 px-3 py-2 text-sm placeholder-gray-600 invalid:border-red-500 dark:placeholder-gray-300", placeholder="Your Name") }}
-                        {{ form.username(class="w-full bg-transparent text-gray-600 dark:text-white dark:border-gray-700 rounded-md border border-gray-300 px-3 py-2 text-sm placeholder-gray-600 invalid:border-red-500 dark:placeholder-gray-300", placeholder="Your Username") }}
+                        {{ form.name(class="w-full bg-transparent text-gray-600 rounded-md border border-gray-300 px-3 py-2 text-sm placeholder-gray-600 invalid:border-red-500", placeholder="Your Name") }}
+                        {{ form.username(class="w-full bg-transparent text-gray-600 rounded-md border border-gray-300 px-3 py-2 text-sm placeholder-gray-600 invalid:border-red-500", placeholder="Your Username") }}
                     </div>
                     <div class="space-y-2">
-                        {{ form.email(class="w-full bg-transparent text-gray-600 dark:text-white dark:border-gray-700 rounded-md border border-gray-300 px-3 py-2 text-sm placeholder-gray-600 invalid:border-red-500 dark:placeholder-gray-300", placeholder="Your Email") }}
-                        {{ form.favorite_color(class="w-full bg-transparent text-gray-600 dark:text-white dark:border-gray-700 rounded-md border border-gray-300 px-3 py-2 text-sm placeholder-gray-600 invalid:border-red-500 dark:placeholder-gray-300", placeholder="Your Favorite Color") }}
+                        {{ form.email(class="w-full bg-transparent text-gray-600 rounded-md border border-gray-300 px-3 py-2 text-sm placeholder-gray-600 invalid:border-red-500", placeholder="Your Email") }}
+                        {{ form.favorite_color(class="w-full bg-transparent text-gray-600 rounded-md border border-gray-300 px-3 py-2 text-sm placeholder-gray-600 invalid:border-red-500", placeholder="Your Favorite Color") }}
                     </div>
                     <div class="space-y-2 col-span-1 sm:col-span-2">
-                        {{ form.password(class="w-full bg-transparent text-gray-600 dark:text-white dark:border-gray-700 rounded-md border border-gray-300 px-3 py-2 text-sm placeholder-gray-600 invalid:border-red-500 dark:placeholder-gray-300", placeholder="New Password") }}
-                        {{ form.confirm_password(class="w-full bg-transparent text-gray-600 dark:text-white dark:border-gray-700 rounded-md border border-gray-300 px-3 py-2 text-sm placeholder-gray-600 invalid:border-red-500 dark:placeholder-gray-300", placeholder="Confirm New Password") }}
+                        {{ form.password(class="w-full bg-transparent text-gray-600 rounded-md border border-gray-300 px-3 py-2 text-sm placeholder-gray-600 invalid:border-red-500", placeholder="New Password") }}
+                        {{ form.confirm_password(class="w-full bg-transparent text-gray-600 rounded-md border border-gray-300 px-3 py-2 text-sm placeholder-gray-600 invalid:border-red-500", placeholder="Confirm New Password") }}
                     </div>
                     <div class="col-span-1 sm:col-span-2">
-                        <label for="profile_pic" class="block text-gray-700 dark:text-gray-300 mb-2">Profile Picture</label>
-                        {{ form.profile_pic(class="w-full bg-transparent text-gray-600 dark:text-white dark:border-gray-700 rounded-md border border-gray-300 px-3 py-2 text-sm placeholder-gray-600 invalid:border-red-500 dark:placeholder-gray-300") }}
+                        <label for="profile_pic" class="block text-gray-700 mb-2">Profile Picture</label>
+                        {{ form.profile_pic(class="w-full bg-transparent text-gray-600 rounded-md border border-gray-300 px-3 py-2 text-sm placeholder-gray-600 invalid:border-red-500") }}
                     </div>
+                    {% if current_user.is_admin %}
+                    <div class="col-span-1 sm:col-span-2">
+                        <label for="is_admin" class="block text-gray-700 mb-2">Admin Status</label>
+                        {{ form.is_admin(class="bg-transparent text-gray-600 rounded-md border border-gray-300 px-3 py-2 text-sm placeholder-gray-600 invalid:border-red-500") }}
+                    </div>
+                    {% endif %}
                 </div>
                 <div class="mt-6">
                     <button class="w-full h-10 bg-blue-600 hover:bg-blue-700 active:bg-blue-800 focus:bg-blue-700 transition duration-500 rounded-md text-white">
