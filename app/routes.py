@@ -1,24 +1,33 @@
 import os
 import uuid
 from datetime import datetime
-from flask import request, redirect, url_for, render_template, flash, current_app, Blueprint
+from flask import request, redirect, url_for, render_template, flash, current_app, Blueprint, abort
 from werkzeug.utils import secure_filename
 from .models import db, Song, Users, Playlist
 from flask import abort
 from .forms import UserForm, SongForm, LoginForm, PlaylistForm
 from werkzeug.security import generate_password_hash, check_password_hash
 from sqlalchemy.exc import IntegrityError
-from flask_login import login_required
+from flask_login import login_required, current_user
 from .signals import is_audio_file, is_image_file, compress_image
+from functools import wraps
 
 
 main = Blueprint('main', __name__)
+
+def admin_required(f):
+    @wraps(f)
+    def decorated_function(*args, **kwargs):
+        if not current_user.is_authenticated or not current_user.is_admin:
+            flash('Page does not exits.', 'danger')
+            return redirect(url_for('main.index'))
+        return f(*args, **kwargs)
+    return decorated_function
 
 @main.route('/')
 @login_required
 def index():
     return redirect(url_for('main.songs'))
-
 
 @main.route('/song/song_list')
 @login_required
@@ -146,6 +155,7 @@ def add_playlist():
 
 @main.route('/song/delete_song/<string:song_id>', methods=['POST'])
 @login_required
+@admin_required
 def delete_song(song_id):
     #query the song to be deleted
     song = Song.query.get(song_id)
@@ -164,6 +174,7 @@ def delete_song(song_id):
 
 @main.route('/song/update_song/<string:song_id>', methods=['GET', 'POST'])
 @login_required
+@admin_required
 def update_song(song_id):
     song = Song.query.get_or_404(song_id)
     form = SongForm(obj=song)  # Populate form fields with existing data
@@ -196,6 +207,8 @@ def update_song(song_id):
 
 
 @main.route('/user/add', methods=['GET', 'POST'])
+@login_required
+@admin_required
 def add_user():
     name = None
     form = UserForm()
@@ -243,12 +256,14 @@ def add_user():
 
 @main.route('/user/user_list')
 @login_required
+@admin_required
 def users():
     users = Users.query.order_by(Users.date_added).all()
     return render_template("user_list.html", users=users)
 
 @main.route('/user/update/<string:user_id>', methods=['GET', 'POST'])
 @login_required
+@admin_required
 def update_user(user_id):
     user = Users.query.get_or_404(user_id)
     form = UserForm(obj=user)
@@ -270,6 +285,7 @@ def update_user(user_id):
 
 @main.route('/user/delete_user/<string:user_id>', methods=['POST'])
 @login_required
+@admin_required
 def delete_user(user_id):
     #query the user to be deleted
     user = Users.query.get(user_id)
